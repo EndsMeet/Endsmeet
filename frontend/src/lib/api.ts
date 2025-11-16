@@ -1,8 +1,10 @@
 // src/lib/api.ts
 
-// Eén centrale API-base. Hij kijkt eerst naar NEXT_PUBLIC_API_BASE_URL,
-// dan naar NEXT_PUBLIC_API_BASE, en valt anders terug op localhost.
+// Eén centrale API-base. Hij kijkt eerst naar NEXT_PUBLIC_API_URL,
+// dan naar NEXT_PUBLIC_API_BASE_URL, dan naar NEXT_PUBLIC_API_BASE,
+// en valt anders terug op localhost.
 const API_BASE =
+  process.env.NEXT_PUBLIC_API_URL ??
   process.env.NEXT_PUBLIC_API_BASE_URL ??
   process.env.NEXT_PUBLIC_API_BASE ??
   "http://127.0.0.1:8020/api";
