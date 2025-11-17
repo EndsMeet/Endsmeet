@@ -19,7 +19,7 @@ export default function Home() {
                 Ends Meet
               </div>
               <div className="text-xs text-zinc-400">
-                AI money coach voor financiële vrijheid
+                AI money coach om slimmer met je geld om te gaan
               </div>
             </div>
           </div>
@@ -65,14 +65,15 @@ export default function Home() {
               <span className="bg-gradient-to-r from-emerald-300 to-emerald-500 bg-clip-text text-transparent">
                 AI money coach
               </span>{" "}
-              naar financiële vrijheid.
+              om slimmer met je geld om te gaan.
             </h1>
 
             <p className="mt-5 max-w-xl text-sm leading-relaxed text-zinc-300 sm:text-base">
               Ends Meet helpt je snappen waar je geld naartoe gaat, waar je
-              slim kunt snijden, én hoe je het vrijgespeelde geld kunt
-              inzetten om vermogen op te bouwen. Geen spreadsheets. Geen
-              oordelen. Wel concrete stappen richting financiële vrijheid.
+              zonder pijn kunt snijden en hoe je het vrijgespeelde geld inzet
+              voor dingen die jij belangrijk vindt: rust, buffers en opbouw op
+              de lange termijn. Geen spreadsheets. Geen verkooppraatjes. Wel
+              concrete, haalbare stappen.
             </p>
 
             {/* Hero CTAs */}
@@ -104,7 +105,7 @@ export default function Home() {
               </div>
               <span className="hidden h-1 w-1 rounded-full bg-zinc-600 sm:inline-block" />
               <span className="hidden sm:inline">
-                Focus op: overzicht, rust & financiële vrijheid.
+                Focus op: overzicht, rust & grip op je geld.
               </span>
             </div>
           </div>
@@ -120,7 +121,7 @@ export default function Home() {
                   Maandprognose
                 </div>
                 <div className="rounded-full bg-emerald-500/10 px-3 py-1 text-[10px] text-emerald-300">
-                  Doel: €300 p/m naar vrijheid
+                  Doel: €300 p/m bewust opzijzetten
                 </div>
               </div>
 
@@ -151,7 +152,7 @@ export default function Home() {
                   Als je <span className="font-semibold">€250 p/m</span> uit
                   vaste lasten haalt en{" "}
                   <span className="font-semibold">€300 p/m</span> automatisch
-                  belegt met 5% rendement, heb je over 10 jaar ±{" "}
+                  opzijzet en belegt met 5% rendement, heb je over 10 jaar ±{" "}
                   <span className="font-semibold">€46.000</span> opgebouwd.
                 </p>
               </div>
@@ -166,17 +167,17 @@ export default function Home() {
                   <span className="text-zinc-300">€95 p/m</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span>“Impuls aankopen”</span>
+                  <span>“Impulsaankopen”</span>
                   <span className="text-zinc-300">€120 p/m</span>
                 </div>
               </div>
 
               <div className="mt-4 flex items-center justify-between border-t border-zinc-800 pt-3 text-[11px]">
                 <span className="text-zinc-400">
-                  Kleine keuzes nu → grote vrijheid later.
+                  Kleine keuzes nu → meer ruimte en opties later.
                 </span>
                 <span className="rounded-full bg-emerald-500/15 px-3 py-1 text-emerald-300">
-                  Financiële vrijheid mode
+                  Slimmer-met-je-geld modus
                 </span>
               </div>
             </div>
@@ -189,9 +190,10 @@ export default function Home() {
             Hoe Ends Meet werkt
           </h2>
           <p className="mb-6 max-w-2xl text-sm text-zinc-300">
-            In plaats van alleen “besparen om het besparen”, helpt Ends Meet je
-            om elke euro die je vrijspeelt een taak te geven: schulden afbouwen,
-            buffer opbouwen, of investeren richting financiële vrijheid.
+            Niet alleen “besparen om het besparen”, maar bewust kiezen: welke
+            uitgaven geven je echt iets, en welke niet? Ends Meet helpt je om
+            elke euro die je vrijspeelt een taak te geven: schulden afbouwen,
+            buffer opbouwen of investeren voor later.
           </p>
 
           <div className="grid gap-4 md:grid-cols-4 text-sm">
@@ -201,8 +203,8 @@ export default function Home() {
               </div>
               <h3 className="text-sm font-semibold">Koppel je bank of upload</h3>
               <p className="mt-2 text-zinc-400">
-                Importeer transacties via bankexport of later via PSD2-koppeling.
-                Geen boekhoudtaal, wél helder overzicht.
+                Importeer transacties via een export van je bank. Geen
+                boekhoudtaal, wél helder overzicht in gewone mensentaal.
               </p>
             </div>
             <div className="rounded-2xl border border-zinc-800 bg-zinc-950/60 p-4">
@@ -214,7 +216,7 @@ export default function Home() {
               </h3>
               <p className="mt-2 text-zinc-400">
                 De AI helpt je terugkerende patronen, vaste kosten en “lekkages”
-                in je uitgaven te spotten.
+                in je uitgaven te spotten, zonder schuldgevoel.
               </p>
             </div>
             <div className="rounded-2xl border border-zinc-800 bg-zinc-950/60 p-4">
@@ -224,19 +226,19 @@ export default function Home() {
               <h3 className="text-sm font-semibold">Vrijspeel-maandbedrag</h3>
               <p className="mt-2 text-zinc-400">
                 Je ziet concreet hoeveel je elke maand kunt vrijmaken zónder dat
-                je leven voelt als één groot “nee”.
+                je leven voelt als één groot “nee”. Rust in je hoofd, ruimte in
+                je budget.
               </p>
             </div>
             <div className="rounded-2xl border border-zinc-800 bg-zinc-950/60 p-4">
               <div className="mb-2 text-xs font-medium text-zinc-400">
                 Stap 4
               </div>
-              <h3 className="text-sm font-semibold">
-                Plan naar financiële vrijheid
-              </h3>
+              <h3 className="text-sm font-semibold">Plan voor je geld</h3>
               <p className="mt-2 text-zinc-400">
                 Simpele scenario’s: wat gebeurt er als je X per maand inlegt
-                tegen Y% rendement? Jij kiest, Ends Meet rekent.
+                tegen Y% rendement? Jij kiest, Ends Meet rekent en houdt het
+                begrijpelijk.
               </p>
             </div>
           </div>
@@ -259,31 +261,35 @@ export default function Home() {
               <h3 className="text-sm font-semibold">Vaste-lasten scanner</h3>
               <p className="mt-2 text-zinc-400">
                 Herkent terugkerende afschrijvingen en laat zien waar je kunt
-                onderhandelen, schrappen of downgraden.
+                onderhandelen, schrappen of downgraden om ruimte te maken.
               </p>
             </div>
             <div className="rounded-2xl border border-zinc-800 bg-zinc-950/70 p-4">
               <h3 className="text-sm font-semibold">
-                Coach-modus richting vrijheid
+                Coach-modus “slimmer met je geld”
               </h3>
               <p className="mt-2 text-zinc-400">
-                Simpele, eerlijke vragen: wat is jouw versie van financiële
-                vrijheid? Ends Meet vertaalt dat naar maandbedragen & doelen.
+                Simpele, eerlijke vragen: wat wil jij dat je geld voor je doet?
+                Ends Meet vertaalt dat naar maandbedragen en concrete acties,
+                zonder gouden bergen te beloven.
               </p>
             </div>
           </div>
         </section>
 
         {/* Testers section */}
-        <section id="testers" className="mb-12 rounded-3xl border border-emerald-500/30 bg-emerald-500/5 px-6 py-6 sm:px-8">
+        <section
+          id="testers"
+          className="mb-12 rounded-3xl border border-emerald-500/30 bg-emerald-500/5 px-6 py-6 sm:px-8"
+        >
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div>
               <h2 className="text-base font-semibold text-emerald-300">
-                Beta-programma: 100 mensen naar meer financiële vrijheid
+                Beta-programma: 100 mensen naar meer rust & grip op hun geld
               </h2>
               <p className="mt-2 max-w-xl text-sm text-emerald-100/90">
-                We zoeken 100 mensen die hun geldstress willen verlagen en hun
-                toekomst willen verbeteren. In ruil voor feedback krijg je{" "}
+                We zoeken 100 mensen die minder geldstress willen en meer
+                controle over hun maand. In ruil voor feedback krijg je{" "}
                 <span className="font-semibold">1 jaar gratis toegang</span> tot
                 Ends Meet.
               </p>
@@ -306,7 +312,10 @@ export default function Home() {
         <footer className="mt-auto flex flex-col justify-between gap-3 border-t border-zinc-900 pt-4 text-xs text-zinc-500 sm:flex-row sm:items-center">
           <div>© {new Date().getFullYear()} Ends Meet · In beta</div>
           <div className="flex flex-wrap gap-3">
-            <span>Gemaakt voor mensen die hun geld willen laten werken voor hun vrijheid.</span>
+            <span>
+              Gemaakt voor mensen die minder geldstress willen en hun geld
+              bewuster willen inzetten.
+            </span>
           </div>
         </footer>
       </div>

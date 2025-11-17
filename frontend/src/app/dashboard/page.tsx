@@ -51,7 +51,7 @@ export default function DashboardPage() {
   const [showRawToken, setShowRawToken] = useState(false);
   const [onboarding, setOnboarding] = useState<OnboardingData | null>(null);
 
-  // Coach state
+  // Coach state (vrije vraag)
   const [coachQuestion, setCoachQuestion] = useState("");
   const [coachAnswer, setCoachAnswer] = useState<string | null>(null);
   const [coachLoading, setCoachLoading] = useState(false);
@@ -62,6 +62,13 @@ export default function DashboardPage() {
   const [importLoading, setImportLoading] = useState(false);
   const [importError, setImportError] = useState<string | null>(null);
   const [importPreview, setImportPreview] = useState<ImportPreview | null>(null);
+
+  // Coach-advies op basis van import-data
+  const [adviceFromImport, setAdviceFromImport] = useState<string | null>(null);
+  const [adviceFromImportLoading, setAdviceFromImportLoading] = useState(false);
+  const [adviceFromImportError, setAdviceFromImportError] = useState<
+    string | null
+  >(null);
 
   useEffect(() => {
     const token = getToken();
@@ -80,9 +87,7 @@ export default function DashboardPage() {
   if (hasToken === false) {
     return (
       <main className="min-h-screen flex items-center justify-center bg-black text-zinc-200">
-        <p className="text-zinc-500">
-          Je wordt doorgestuurd naar de login…
-        </p>
+        <p className="text-zinc-500">Je wordt doorgestuurd naar de login…</p>
       </main>
     );
   }
@@ -130,7 +135,9 @@ export default function DashboardPage() {
       setCoachAnswer(answer);
     } catch (err: any) {
       console.error(err);
-      setCoachError(err.message || "Er ging iets mis bij het ophalen van het antwoord.");
+      setCoachError(
+        err.message || "Er ging iets mis bij het ophalen van het antwoord.",
+      );
     } finally {
       setCoachLoading(false);
     }
@@ -139,6 +146,8 @@ export default function DashboardPage() {
   async function handlePreviewImport() {
     setImportError(null);
     setImportPreview(null);
+    setAdviceFromImport(null);
+    setAdviceFromImportError(null);
 
     if (!importFile) {
       setImportError("Kies eerst een bestand (CSV of Excel).");
@@ -156,6 +165,65 @@ export default function DashboardPage() {
       );
     } finally {
       setImportLoading(false);
+    }
+  }
+
+  async function handleAskCoachFromImport() {
+    if (!importPreview) {
+      setAdviceFromImportError(
+        "Upload en analyseer eerst een bestand voordat je advies vraagt.",
+      );
+      return;
+    }
+
+    try {
+      setAdviceFromImportError(null);
+      setAdviceFromImport(null);
+      setAdviceFromImportLoading(true);
+
+      const topCats = importPreview.by_category
+        .slice()
+        .sort((a, b) => Math.abs(b.total) - Math.abs(a.total))
+        .slice(0, 5);
+
+      const question = `
+Je bent een nuchtere Nederlandse geldcoach.
+De gebruiker heeft net een bankbestand geüpload. Hier is een samenvatting:
+
+- Totaal inkomen per periode: ${importPreview.total_income.toFixed(
+        0,
+      )} ${importPreview.currency}
+- Totaal uitgaven per periode: ${importPreview.total_expense.toFixed(
+        0,
+      )} ${importPreview.currency}
+- Netto resultaat: ${importPreview.net.toFixed(0)} ${importPreview.currency}
+
+Top categorieën (bedragen kunnen negatief zijn bij uitgaven):
+${topCats
+  .map(
+    (c) =>
+      `- ${c.category}: ${c.total.toFixed(0)} ${importPreview.currency}`,
+  )
+  .join("\n")}
+
+Geef in maximaal 5 concrete bullets:
+- waar iemand waarschijnlijk het makkelijkst kan snijden zonder dat het leven \"kut\" wordt
+- wat een realistisch maandelijks vrij te spelen bedrag is op basis van dit patroon
+- en 1 suggestie wat iemand met dat vrijgespeelde bedrag kan doen (buffer, schulden aflossen, simpel beleggen).
+
+Gebruik \"je\" vorm, vriendelijk en praktisch. Geen disclaimers, geen ingewikkelde beleggingsproducten, geen beloften over rijk worden.
+`.trim();
+
+      const onboardingData = onboarding ?? null;
+      const answer = await askCoach(question, onboardingData);
+      setAdviceFromImport(answer);
+    } catch (err: any) {
+      console.error(err);
+      setAdviceFromImportError(
+        err.message ?? "Kon geen advies ophalen van de coach.",
+      );
+    } finally {
+      setAdviceFromImportLoading(false);
     }
   }
 
@@ -292,7 +360,8 @@ export default function DashboardPage() {
                 </div>
               ) : (
                 <p className="text-sm text-zinc-500">
-                  Stel een vraag hierboven om een persoonlijk antwoord te krijgen.
+                  Stel een vraag hierboven om een persoonlijk antwoord te
+                  krijgen.
                 </p>
               )}
             </div>
@@ -351,15 +420,17 @@ export default function DashboardPage() {
           </section>
         </div>
 
-        {/* Upload & preview kaart */}
+        {/* Upload & preview kaart + diagrammen + coach-advies */}
         <div className="mt-8">
           <section className="bg-zinc-950 border border-zinc-800 rounded-2xl p-5 shadow-lg shadow-black/40">
             <h2 className="text-lg font-semibold mb-1">
-              Upload je transacties (experiment)
+              Uitgaven-radar (upload je transacties)
             </h2>
             <p className="text-sm text-zinc-400 mb-3">
-              Laad een CSV of Excel met minimaal een kolom <code>amount</code>.
-              Optioneel: <code>date</code> en <code>category</code>.
+              Laad een CSV of Excel met minimaal een kolom{" "}
+              <code>amount</code>. Optioneel: <code>date</code> en{" "}
+              <code>category</code>. We maken een snelle scan van je inkomsten
+              en uitgaven.
             </p>
 
             <div className="flex flex-col md:flex-row md:items-center gap-3 mb-3">
@@ -369,6 +440,8 @@ export default function DashboardPage() {
                 onChange={(e) => {
                   setImportError(null);
                   setImportPreview(null);
+                  setAdviceFromImport(null);
+                  setAdviceFromImportError(null);
                   setImportFile(e.target.files?.[0] ?? null);
                 }}
                 className="text-sm text-zinc-300 file:mr-3 file:py-1.5 file:px-3 file:rounded-full file:border-0 file:bg-zinc-800 file:text-xs file:text-zinc-100 hover:file:bg-zinc-700"
@@ -387,94 +460,182 @@ export default function DashboardPage() {
             )}
 
             {importPreview && (
-              <div className="mt-4 grid md:grid-cols-3 gap-4 text-sm">
-                <div>
-                  <div className="text-xs uppercase tracking-wide text-zinc-500 mb-1">
-                    Samenvatting
+              <div className="mt-4 space-y-5 text-sm">
+                {/* Samenvatting */}
+                <div className="grid md:grid-cols-3 gap-4">
+                  <div>
+                    <div className="text-xs uppercase tracking-wide text-zinc-500 mb-1">
+                      Samenvatting
+                    </div>
+                    <p className="text-zinc-200">
+                      Rijen:{" "}
+                      <span className="font-semibold">
+                        {importPreview.row_count}
+                      </span>
+                    </p>
+                    <p className="text-emerald-400">
+                      Inkomens:{" "}
+                      <span className="font-semibold">
+                        {importPreview.total_income.toFixed(2)}{" "}
+                        {importPreview.currency}
+                      </span>
+                    </p>
+                    <p className="text-rose-400">
+                      Uitgaven:{" "}
+                      <span className="font-semibold">
+                        {importPreview.total_expense.toFixed(2)}{" "}
+                        {importPreview.currency}
+                      </span>
+                    </p>
+                    <p className="text-zinc-200 mt-1">
+                      Netto:{" "}
+                      <span
+                        className={
+                          importPreview.net >= 0
+                            ? "text-emerald-400 font-semibold"
+                            : "text-rose-400 font-semibold"
+                        }
+                      >
+                        {importPreview.net.toFixed(2)}{" "}
+                        {importPreview.currency}
+                      </span>
+                    </p>
                   </div>
-                  <p className="text-zinc-200">
-                    Rijen:{" "}
-                    <span className="font-semibold">
-                      {importPreview.row_count}
-                    </span>
-                  </p>
-                  <p className="text-emerald-400">
-                    Inkomens:{" "}
-                    <span className="font-semibold">
-                      {importPreview.total_income.toFixed(2)}{" "}
-                      {importPreview.currency}
-                    </span>
-                  </p>
-                  <p className="text-rose-400">
-                    Uitgaven:{" "}
-                    <span className="font-semibold">
-                      {importPreview.total_expense.toFixed(2)}{" "}
-                      {importPreview.currency}
-                    </span>
-                  </p>
-                  <p className="text-zinc-200 mt-1">
-                    Netto:{" "}
-                    <span
-                      className={
-                        importPreview.net >= 0
-                          ? "text-emerald-400 font-semibold"
-                          : "text-rose-400 font-semibold"
-                      }
+
+                  {/* Per categorie – diagram */}
+                  <div>
+                    <div className="text-xs uppercase tracking-wide text-zinc-500 mb-1">
+                      Per categorie (diagram)
+                    </div>
+                    {importPreview.by_category.length === 0 ? (
+                      <p className="text-xs text-zinc-500">
+                        Geen categorieën in het bestand gevonden.
+                      </p>
+                    ) : (
+                      <div className="space-y-1.5 text-xs text-zinc-200">
+                        {(() => {
+                          const maxAbs =
+                            Math.max(
+                              ...importPreview.by_category.map((c) =>
+                                Math.abs(c.total || 0),
+                              ),
+                            ) || 1;
+
+                          return importPreview.by_category.map((c) => {
+                            const widthPct =
+                              (Math.abs(c.total || 0) / maxAbs) * 100;
+                            const isPositive = c.total >= 0;
+                            return (
+                              <div
+                                key={c.category}
+                                className="flex items-center gap-2"
+                              >
+                                <span className="w-24 truncate text-[11px] text-zinc-400">
+                                  {c.category}
+                                </span>
+                                <div className="flex-1 h-2 rounded-full bg-zinc-900 overflow-hidden">
+                                  <div
+                                    className={`h-full ${
+                                      isPositive
+                                        ? "bg-emerald-500"
+                                        : "bg-rose-500"
+                                    }`}
+                                    style={{ width: `${widthPct}%` }}
+                                  />
+                                </div>
+                                <span className="w-16 text-right text-[11px]">
+                                  {c.total.toFixed(0)}
+                                </span>
+                              </div>
+                            );
+                          });
+                        })()}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Per maand – diagram */}
+                  <div>
+                    <div className="text-xs uppercase tracking-wide text-zinc-500 mb-1">
+                      Per maand (diagram)
+                    </div>
+                    {importPreview.by_month.length === 0 ? (
+                      <p className="text-xs text-zinc-500">
+                        Geen datumkolom herkend.
+                      </p>
+                    ) : (
+                      <div className="space-y-1.5 text-xs text-zinc-200">
+                        {(() => {
+                          const maxAbs =
+                            Math.max(
+                              ...importPreview.by_month.map((m) =>
+                                Math.abs(m.total || 0),
+                              ),
+                            ) || 1;
+
+                          return importPreview.by_month.map((m) => {
+                            const widthPct =
+                              (Math.abs(m.total || 0) / maxAbs) * 100;
+                            const isPositive = m.total >= 0;
+                            return (
+                              <div
+                                key={m.month}
+                                className="flex items-center gap-2"
+                              >
+                                <span className="w-20 text-[11px] text-zinc-400">
+                                  {m.month}
+                                </span>
+                                <div className="flex-1 h-2 rounded-full bg-zinc-900 overflow-hidden">
+                                  <div
+                                    className={`h-full ${
+                                      isPositive
+                                        ? "bg-emerald-500"
+                                        : "bg-rose-500"
+                                    }`}
+                                    style={{ width: `${widthPct}%` }}
+                                  />
+                                </div>
+                                <span className="w-16 text-right text-[11px]">
+                                  {m.total.toFixed(0)}
+                                </span>
+                              </div>
+                            );
+                          });
+                        })()}
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Coach-advies op basis van deze data */}
+                <div className="border-t border-zinc-800 pt-4 mt-2">
+                  <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+                    <div className="text-xs text-zinc-400">
+                      Laat de coach meekijken naar deze cijfers en geef je
+                      concrete bespaar- en herverdeel-ideeën.
+                    </div>
+                    <button
+                      type="button"
+                      disabled={adviceFromImportLoading}
+                      onClick={handleAskCoachFromImport}
+                      className="inline-flex items-center justify-center rounded-full bg-emerald-500 px-4 py-1.5 text-xs font-semibold text-black hover:bg-emerald-400 disabled:opacity-60 disabled:cursor-not-allowed"
                     >
-                      {importPreview.net.toFixed(2)} {importPreview.currency}
-                    </span>
-                  </p>
-                </div>
-
-                <div>
-                  <div className="text-xs uppercase tracking-wide text-zinc-500 mb-1">
-                    Per categorie
+                      {adviceFromImportLoading
+                        ? "Coach kijkt naar je data…"
+                        : "Vraag advies op basis van deze data"}
+                    </button>
                   </div>
-                  {importPreview.by_category.length === 0 ? (
-                    <p className="text-xs text-zinc-500">
-                      Geen categorieën in het bestand gevonden.
+
+                  {adviceFromImportError && (
+                    <p className="mt-2 text-xs text-rose-400">
+                      {adviceFromImportError}
                     </p>
-                  ) : (
-                    <ul className="space-y-1 text-xs text-zinc-200">
-                      {importPreview.by_category.map((c) => (
-                        <li key={c.category} className="flex justify-between">
-                          <span>{c.category}</span>
-                          <span
-                            className={
-                              c.total >= 0 ? "text-emerald-400" : "text-rose-400"
-                            }
-                          >
-                            {c.total.toFixed(2)}
-                          </span>
-                        </li>
-                      ))}
-                    </ul>
                   )}
-                </div>
 
-                <div>
-                  <div className="text-xs uppercase tracking-wide text-zinc-500 mb-1">
-                    Per maand
-                  </div>
-                  {importPreview.by_month.length === 0 ? (
-                    <p className="text-xs text-zinc-500">
-                      Geen datumkolom herkend.
-                    </p>
-                  ) : (
-                    <ul className="space-y-1 text-xs text-zinc-200">
-                      {importPreview.by_month.map((m) => (
-                        <li key={m.month} className="flex justify-between">
-                          <span>{m.month}</span>
-                          <span
-                            className={
-                              m.total >= 0 ? "text-emerald-400" : "text-rose-400"
-                            }
-                          >
-                            {m.total.toFixed(2)}
-                          </span>
-                        </li>
-                      ))}
-                    </ul>
+                  {adviceFromImport && (
+                    <div className="mt-3 rounded-xl bg-emerald-50/5 border border-emerald-500/30 p-3 text-xs text-emerald-100 whitespace-pre-line">
+                      {adviceFromImport}
+                    </div>
                   )}
                 </div>
               </div>
