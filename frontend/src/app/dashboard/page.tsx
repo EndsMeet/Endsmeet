@@ -3,7 +3,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { getToken, logout, askCoach, previewImport } from "@/lib/api";
+import { getToken, askCoach, previewImport } from "@/lib/api";
 
 type OnboardingData = {
   name?: string;
@@ -240,7 +240,15 @@ Gebruik "je"-vorm, vriendelijk en praktisch. Geen disclaimers, geen ingewikkelde
   }
 
   // Kleine helper: simpele horizontale bar (voor “grafieken”)
-  function Bar({ value, max, positive }: { value: number; max: number; positive?: boolean }) {
+  function Bar({
+    value,
+    max,
+    positive,
+  }: {
+    value: number;
+    max: number;
+    positive?: boolean;
+  }) {
     const pct = max > 0 ? (Math.abs(value) / max) * 100 : 0;
     return (
       <div className="flex-1 h-2 rounded-full bg-zinc-900 overflow-hidden">
@@ -398,7 +406,7 @@ Gebruik "je"-vorm, vriendelijk en praktisch. Geen disclaimers, geen ingewikkelde
                         )}
                         positive
                       />
-                      <span className="w-18 text-right text-xs">
+                      <span className="w-16 text-right text-xs">
                         {importPreview.total_income.toFixed(0)}
                       </span>
                     </div>
@@ -413,7 +421,7 @@ Gebruik "je"-vorm, vriendelijk en praktisch. Geen disclaimers, geen ingewikkelde
                           Math.abs(importPreview.total_expense),
                         )}
                       />
-                      <span className="w-18 text-right text-xs">
+                      <span className="w-16 text-right text-xs">
                         {importPreview.total_expense.toFixed(0)}
                       </span>
                     </div>
@@ -702,7 +710,7 @@ Gebruik "je"-vorm, vriendelijk en praktisch. Geen disclaimers, geen ingewikkelde
                             <span className="w-20 text-[11px] text-zinc-400">
                               {m.month}
                             </span>
-                            <Bar value={m.total} max={maxAbs} />
+                              <Bar value={m.total} max={maxAbs} />
                             <span className="w-16 text-right text-[11px]">
                               {m.total.toFixed(0)}
                             </span>
