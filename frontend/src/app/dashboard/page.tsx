@@ -11,6 +11,10 @@ type OnboardingData = {
   timeframe?: string;
   situation?: string;
   priority?: string;
+  // Voor nu optioneel: hier kun je later in de onboarding echte waarden in stoppen
+  monthlyIncome?: number;
+  monthlyExpenses?: number;
+  freeToPlay?: number;
 };
 
 function loadOnboardingFromLocalStorage(): OnboardingData | null {
@@ -131,7 +135,10 @@ export default function DashboardPage() {
 
     try {
       setCoachLoading(true);
-      const answer = await askCoach(coachQuestion.trim(), onboarding ?? undefined);
+      const answer = await askCoach(
+        coachQuestion.trim(),
+        onboarding ?? undefined,
+      );
       setCoachAnswer(answer);
     } catch (err: any) {
       console.error(err);
@@ -207,11 +214,11 @@ ${topCats
   .join("\n")}
 
 Geef in maximaal 5 concrete bullets:
-- waar iemand waarschijnlijk het makkelijkst kan snijden zonder dat het leven \"kut\" wordt
+- waar iemand waarschijnlijk het makkelijkst kan snijden zonder dat het leven "kut" wordt
 - wat een realistisch maandelijks vrij te spelen bedrag is op basis van dit patroon
 - en 1 suggestie wat iemand met dat vrijgespeelde bedrag kan doen (buffer, schulden aflossen, simpel beleggen).
 
-Gebruik \"je\" vorm, vriendelijk en praktisch. Geen disclaimers, geen ingewikkelde beleggingsproducten, geen beloften over rijk worden.
+Gebruik "je" vorm, vriendelijk en praktisch. Geen disclaimers, geen ingewikkelde beleggingsproducten, geen beloften over rijk worden.
 `.trim();
 
       const onboardingData = onboarding ?? null;
@@ -226,6 +233,12 @@ Gebruik \"je\" vorm, vriendelijk en praktisch. Geen disclaimers, geen ingewikkel
       setAdviceFromImportLoading(false);
     }
   }
+
+  const income = onboarding?.monthlyIncome ?? 0;
+  const expenses = onboarding?.monthlyExpenses ?? 0;
+  const freeToPlay = onboarding?.freeToPlay ?? 0;
+  const hasFinancialOnboarding =
+    income > 0 || expenses > 0 || freeToPlay > 0;
 
   return (
     <main className="min-h-screen bg-[#050505] text-zinc-100">
@@ -293,9 +306,9 @@ Gebruik \"je\" vorm, vriendelijk en praktisch. Geen disclaimers, geen ingewikkel
               </div>
             ) : (
               <p className="text-sm mb-3 text-zinc-300">
-                We gebruiken jouw antwoorden om je te coachen richting
-                financiële vrijheid. Hoe meer je invult, hoe slimmer de
-                aanbevelingen worden.
+                We gebruiken jouw antwoorden om je te coachen richting slimmer
+                met je geld. Hoe meer je invult, hoe slimmer de aanbevelingen
+                worden.
               </p>
             )}
 
@@ -310,7 +323,8 @@ Gebruik \"je\" vorm, vriendelijk en praktisch. Geen disclaimers, geen ingewikkel
 
             {onboarding ? (
               <p className="text-xs text-emerald-500 mt-2 mb-4">
-                ✅ Onboarding is opgeslagen. Je coach gebruikt dit als startpunt.
+                ✅ Onboarding is opgeslagen. Je coach gebruikt dit als
+                startpunt.
               </p>
             ) : (
               <p className="text-xs text-amber-500 mt-2 mb-4">
@@ -367,23 +381,70 @@ Gebruik \"je\" vorm, vriendelijk en praktisch. Geen disclaimers, geen ingewikkel
             </div>
           </section>
 
-          {/* Technische info */}
+          {/* Technische info + grafieken */}
           <section className="bg-zinc-950 border border-zinc-800 rounded-2xl p-5 shadow-lg shadow-black/40">
             <h2 className="text-lg font-semibold mb-1">Technische info</h2>
-            <p className="text-sm text-zinc-400 mb-3">
-              Je bent ingelogd met een geldige access token.
+            <p className="text-xs text-zinc-500 mb-4">
+              Een snelle visuele impressie van je maand, op basis van wat je
+              (straks) in de onboarding invult.
             </p>
-            <button
-              onClick={() => setShowRawToken((v) => !v)}
-              className="text-xs text-emerald-400 hover:text-emerald-300 underline"
-            >
-              {showRawToken ? "Verberg access token" : "Toon ruwe access token"}
-            </button>
-            {showRawToken && (
-              <pre className="mt-3 p-3 rounded-lg bg-zinc-900 text-[10px] text-zinc-100 overflow-x-auto border border-zinc-800">
-                {getToken() ?? "Geen token gevonden"}
-              </pre>
+
+            {hasFinancialOnboarding ? (
+              <div className="grid grid-cols-1 gap-4">
+                <div className="p-3 rounded-xl bg-zinc-900 border border-zinc-800">
+                  <h3 className="text-xs font-medium text-zinc-300 mb-2">
+                    Inkomen vs uitgaven
+                  </h3>
+                  <IncomeExpenseChart income={income} expenses={expenses} />
+                </div>
+
+                <div className="p-3 rounded-xl bg-zinc-900 border border-zinc-800">
+                  <h3 className="text-xs font-medium text-zinc-300 mb-2">
+                    Vrij te spelen bedrag
+                  </h3>
+                  <FreeToPlayChart freeToPlay={freeToPlay} />
+                </div>
+
+                <div className="p-3 rounded-xl bg-zinc-900 border border-zinc-800">
+                  <h3 className="text-xs font-medium text-zinc-300 mb-2">
+                    Maandoverzicht
+                  </h3>
+                  <MonthlyOverviewChart income={income} expenses={expenses} />
+                </div>
+              </div>
+            ) : (
+              <div className="rounded-xl bg-zinc-900 border border-zinc-800 p-3 text-xs text-zinc-400">
+                <p className="mb-1">
+                  We hebben nog geen harde bedragen voor inkomen en uitgaven
+                  uit je onboarding.
+                </p>
+                <p>
+                  Zodra we daar bedragen vragen (bijv. netto maandinkomen,
+                  gemiddelde vaste lasten, vrije ruimte), zie je hier
+                  grafieken die je maand visualiseren.
+                </p>
+              </div>
             )}
+
+            {/* Token info */}
+            <div className="mt-4 border-t border-zinc-800 pt-3">
+              <p className="text-sm text-zinc-400 mb-2">
+                Je bent ingelogd met een geldige access token.
+              </p>
+              <button
+                onClick={() => setShowRawToken((v) => !v)}
+                className="text-xs text-emerald-400 hover:text-emerald-300 underline"
+              >
+                {showRawToken
+                  ? "Verberg access token"
+                  : "Toon ruwe access token"}
+              </button>
+              {showRawToken && (
+                <pre className="mt-3 p-3 rounded-lg bg-zinc-900 text-[10px] text-zinc-100 overflow-x-auto border border-zinc-800">
+                  {getToken() ?? "Geen token gevonden"}
+                </pre>
+              )}
+            </div>
           </section>
         </div>
 
@@ -427,10 +488,9 @@ Gebruik \"je\" vorm, vriendelijk en praktisch. Geen disclaimers, geen ingewikkel
               Uitgaven-radar (upload je transacties)
             </h2>
             <p className="text-sm text-zinc-400 mb-3">
-              Laad een CSV of Excel met minimaal een kolom{" "}
-              <code>amount</code>. Optioneel: <code>date</code> en{" "}
-              <code>category</code>. We maken een snelle scan van je inkomsten
-              en uitgaven.
+              Laad een CSV of Excel met minimaal een kolom <code>amount</code>.
+              Optioneel: <code>date</code> en <code>category</code>. We maken
+              een snelle scan van je inkomsten en uitgaven.
             </p>
 
             <div className="flex flex-col md:flex-row md:items-center gap-3 mb-3">
@@ -644,5 +704,136 @@ Gebruik \"je\" vorm, vriendelijk en praktisch. Geen disclaimers, geen ingewikkel
         </div>
       </div>
     </main>
+  );
+}
+
+/* ---------- Kleine “fake” grafiekcomponenten ---------- */
+
+type IncomeExpenseChartProps = {
+  income: number;
+  expenses: number;
+};
+
+function IncomeExpenseChart({ income, expenses }: IncomeExpenseChartProps) {
+  const absIncome = Math.max(income, 0);
+  const absExpenses = Math.max(Math.abs(expenses), 0);
+  const max = Math.max(absIncome, absExpenses, 1);
+
+  const incomeWidth = (absIncome / max) * 100;
+  const expenseWidth = (absExpenses / max) * 100;
+
+  return (
+    <div className="space-y-2 text-xs">
+      <div className="flex items-center gap-2">
+        <span className="w-20 text-zinc-400">Inkomen</span>
+        <div className="flex-1 h-2 rounded-full bg-zinc-800 overflow-hidden">
+          <div
+            className="h-full bg-emerald-500"
+            style={{ width: `${incomeWidth}%` }}
+          />
+        </div>
+        <span className="w-16 text-right text-zinc-200">
+          {income.toFixed(0)}
+        </span>
+      </div>
+      <div className="flex items-center gap-2">
+        <span className="w-20 text-zinc-400">Uitgaven</span>
+        <div className="flex-1 h-2 rounded-full bg-zinc-800 overflow-hidden">
+          <div
+            className="h-full bg-rose-500"
+            style={{ width: `${expenseWidth}%` }}
+          />
+        </div>
+        <span className="w-16 text-right text-zinc-200">
+          {expenses.toFixed(0)}
+        </span>
+      </div>
+    </div>
+  );
+}
+
+type FreeToPlayChartProps = {
+  freeToPlay: number;
+};
+
+function FreeToPlayChart({ freeToPlay }: FreeToPlayChartProps) {
+  const max = Math.max(Math.abs(freeToPlay), 1);
+  const width = (Math.abs(freeToPlay) / max) * 100;
+
+  return (
+    <div className="space-y-2 text-xs">
+      <div className="flex items-center gap-2">
+        <span className="w-24 text-zinc-400">Vrij te spelen</span>
+        <div className="flex-1 h-2 rounded-full bg-zinc-800 overflow-hidden">
+          <div
+            className="h-full bg-emerald-500"
+            style={{ width: `${width}%` }}
+          />
+        </div>
+        <span className="w-20 text-right text-zinc-200">
+          {freeToPlay.toFixed(0)}
+        </span>
+      </div>
+    </div>
+  );
+}
+
+type MonthlyOverviewChartProps = {
+  income: number;
+  expenses: number;
+};
+
+function MonthlyOverviewChart({
+  income,
+  expenses,
+}: MonthlyOverviewChartProps) {
+  const net = income + expenses; // uitgaven vaak negatief
+  const max = Math.max(Math.abs(income), Math.abs(expenses), Math.abs(net), 1);
+
+  const incomeW = (Math.abs(income) / max) * 100;
+  const expenseW = (Math.abs(expenses) / max) * 100;
+  const netW = (Math.abs(net) / max) * 100;
+
+  return (
+    <div className="space-y-2 text-xs">
+      <div className="flex items-center gap-2">
+        <span className="w-20 text-zinc-400">Inkomen</span>
+        <div className="flex-1 h-2 rounded-full bg-zinc-800 overflow-hidden">
+          <div
+            className="h-full bg-emerald-500"
+            style={{ width: `${incomeW}%` }}
+          />
+        </div>
+        <span className="w-16 text-right text-zinc-200">
+          {income.toFixed(0)}
+        </span>
+      </div>
+
+      <div className="flex items-center gap-2">
+        <span className="w-20 text-zinc-400">Uitgaven</span>
+        <div className="flex-1 h-2 rounded-full bg-zinc-800 overflow-hidden">
+          <div
+            className="h-full bg-rose-500"
+            style={{ width: `${expenseW}%` }}
+          />
+        </div>
+        <span className="w-16 text-right text-zinc-200">
+          {expenses.toFixed(0)}
+        </span>
+      </div>
+
+      <div className="flex items-center gap-2">
+        <span className="w-20 text-zinc-400">Netto</span>
+        <div className="flex-1 h-2 rounded-full bg-zinc-800 overflow-hidden">
+          <div
+            className={`h-full ${
+              net >= 0 ? "bg-emerald-500" : "bg-rose-500"
+            }`}
+            style={{ width: `${netW}%` }}
+          />
+        </div>
+        <span className="w-16 text-right text-zinc-200">{net.toFixed(0)}</span>
+      </div>
+    </div>
   );
 }

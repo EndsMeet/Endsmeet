@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="nl">
+  <head>
+    <meta charset="utf-8" />
+    <title>{{headline}} – EndsMeet</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Preheader tekst (onzichtbaar in body, zichtbaar in inbox preview) -->
+    <style>
+      .preheader {
+        display: none !important;
+        visibility: hidden;
+        opacity: 0;
+        color: transparent;
+        height: 0;
+        width: 0;
+        mso-hide: all;
+        overflow: hidden;
+      }
+      body {
+        margin: 0;
+        padding: 0;
+        background-color: #020617;
+        font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text",
+          system-ui, -apple-system, Segoe UI, sans-serif;
+      }
+    </style>
+  </head>
+  <body style="margin:0; padding:0; background-color:#020617;">
+    <div class="preheader">
+      {{preheader}}
+    </div>
+
+    <table
+      role="presentation"
+      width="100%"
+      cellpadding="0"
+      cellspacing="0"
+      style="background-color:#020617; padding:24px 0;"
+    >
+      <tr>
+        <td align="center">
+          <table
+            role="presentation"
+            width="100%"
+            cellpadding="0"
+            cellspacing="0"
+            style="max-width:600px; background-color:#020617; color:#e5e7eb;"
+          >
+            <!-- Logo / header -->
+            <tr>
+              <td style="padding:0 24px 16px 24px;" align="left">
+                <table role="presentation" cellpadding="0" cellspacing="0">
+                  <tr>
+                    <td
+                      style="
+                        background-color:#22c55e;
+                        color:#020617;
+                        font-weight:700;
+                        font-size:14px;
+                        line-height:1;
+                        border-radius:999px;
+                        height:32px;
+                        width:32px;
+                        text-align:center;
+                        vertical-align:middle;
+                      "
+                    >
+                      €
+                    </td>
+                    <td style="padding-left:8px;">
+                      <div
+                        style="
+                          font-size:13px;
+                          font-weight:600;
+                          color:#f9fafb;
+                          line-height:1.3;
+                        "
+                      >
+                        EndsMeet
+                      </div>
+                      <div
+                        style="
+                          font-size:11px;
+                          color:#9ca3af;
+                          line-height:1.3;
+                        "
+                      >
+                        Slimmer met je geld
+                      </div>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+
+            <!-- Card -->
+            <tr>
+              <td style="padding:0 24px 24px 24px;">
+                <table
+                  role="presentation"
+                  width="100%"
+                  cellpadding="0"
+                  cellspacing="0"
+                  style="
+                    border-radius:16px;
+                    border:1px solid #1f2937;
+                    background:radial-gradient(circle at top, #22c55e19, #020617);
+                  "
+                >
+                  <tr>
+                    <td style="padding:24px 20px 20px 20px;">
+                      <!-- Headline -->
+                      <h1
+                        style="
+                          margin:0 0 8px 0;
+                          font-size:20px;
+                          line-height:1.3;
+                          color:#f9fafb;
+                          font-weight:600;
+                        "
+                      >
+                        {{headline}}
+                      </h1>
+
+                      <!-- Intro -->
+                      <p
+                        style="
+                          margin:0 0 16px 0;
+                          font-size:14px;
+                          line-height:1.6;
+                          color:#d1d5db;
+                        "
+                      >
+                        {{intro}}
+                      </p>
+
+                      <!-- Extra inhoud (optioneel, kan HTML zijn) -->
+                      {{extra_html}}
+
+                      <!-- CTA button -->
+                      {{cta_block}}
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+
+            <!-- Footer -->
+            <tr>
+              <td
+                style="
+                  padding:0 24px 8px 24px;
+                  font-size:11px;
+                  color:#6b7280;
+                "
+              >
+                {{footer_text}}
+              </td>
+            </tr>
+            <tr>
+              <td
+                style="
+                  padding:0 24px 16px 24px;
+                  font-size:11px;
+                  color:#4b5563;
+                "
+              >
+                Je ontvangt deze mail omdat je je hebt aangemeld voor EndsMeet
+                of omdat je testgebruiker bent. Als je dit niet herkent, kun je
+                deze mail negeren.
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>
