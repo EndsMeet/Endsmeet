@@ -1,19 +1,21 @@
+// src/app/layout.tsx
 import "./globals.css";
+import type { ReactNode } from "react";
 import Header from "@/components/Header";
 
 export const metadata = {
   title: "EndsMeet",
-  description: "Jouw AI financiële vrijheid coach",
+  description: "Je persoonlijke money coach",
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
-      <body className="bg-white text-black">
+    <html lang="nl">
+      <body className="bg-black text-white">
+        {/* Globale navigatiebalk */}
         <Header />
-        <main className="max-w-5xl mx-auto px-4">
-          {children}
-        </main>
+        {/* Pagina-inhoud */}
+        <main className="pt-6">{children}</main>
       </body>
     </html>
   );
